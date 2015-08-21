@@ -1,4 +1,4 @@
 == 这是什么 ==
 基于KMyMoney的SQLite DB文件的基金投资分析器。
 == 如何运行 ==
-java blove.kmm.fund.App <KMyMomey_SQLite_file>
+java blove.kmm.fund.App &ltKMyMomey_SQLite_file&gt
