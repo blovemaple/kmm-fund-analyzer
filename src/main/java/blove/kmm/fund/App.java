@@ -2,6 +2,7 @@ package blove.kmm.fund;
 
 import java.util.List;
 
+import blove.kmm.fund.aview.ChartSettingPane;
 import blove.kmm.fund.aview.DateSelector;
 import blove.kmm.fund.aview.FundChart;
 import blove.kmm.fund.aview.FundTreeTable;
@@ -35,14 +36,17 @@ public class App extends Application {
 		BorderPane fundPane = new BorderPane();
 		pane.setCenter(fundPane);
 
-		BorderPane dateAndChartPane = new BorderPane();
-		fundPane.setTop(dateAndChartPane);
+		BorderPane chartPane = new BorderPane();
+		fundPane.setTop(chartPane);
 
 		DateSelector dateSelector = new DateSelector(biz);
-		dateAndChartPane.setTop(dateSelector);
+		chartPane.setTop(dateSelector);
 
 		FundChart chart = new FundChart(biz);
-		dateAndChartPane.setCenter(chart);
+		chartPane.setCenter(chart);
+
+		ChartSettingPane chartSettingPane = new ChartSettingPane();
+		chartPane.setBottom(chartSettingPane);
 
 		TransactionTable transTable = new TransactionTable(biz);
 		fundPane.setCenter(transTable);
@@ -70,6 +74,9 @@ public class App extends Application {
 		// 将 图表 的 交易记录 绑定到 交易表 上，将 价格列表 绑定到 价格表 上
 		chart.transactionsProperty().bind(transTable.itemsProperty());
 		chart.pricesProperty().bind(priceTable.itemsProperty());
+
+		// 将 图表 的 设置属性 绑定到 设置面板 的 设置属性 上
+		chart.yAxisFrom0Property().bind(chartSettingPane.yAxisFrom0Property());
 
 		Scene snece = new Scene(pane);
 		primaryStage.setScene(snece);

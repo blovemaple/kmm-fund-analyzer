@@ -2,6 +2,7 @@ package blove.kmm.fund.aview;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.DoubleSummaryStatistics;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,7 +11,9 @@ import blove.kmm.fund.biz.FundBiz;
 import blove.kmm.fund.biz.bo.DatePrice;
 import blove.kmm.fund.biz.bo.Transaction;
 import blove.kmm.fund.support.db.TransactionType;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -27,6 +30,8 @@ public class FundChart extends LineChart<String, Number> {
 	private ObjectProperty<ObservableList<DatePrice>> prices = new SimpleObjectProperty<>();
 	private ObjectProperty<ObservableList<Transaction>> transactions = new SimpleObjectProperty<>();
 
+	private BooleanProperty yAxisFrom0 = new SimpleBooleanProperty();
+
 	@SuppressWarnings("unchecked")
 	public FundChart(FundBiz biz) {
 		super(new CategoryAxis(), new NumberAxis());
@@ -35,18 +40,15 @@ public class FundChart extends LineChart<String, Number> {
 
 		// 每日净值线
 		XYChart.Series<String, Number> priceSeries = new XYChart.Series<>("每日净值", FXCollections.observableArrayList());
+		setData(FXCollections.observableArrayList(priceSeries));
+		// 设置线条颜色（必须在添加进图表之后）
+		setLineColor(priceSeries, Color.RED, 1.0);
 
 		// 持有均价线列表
 		ObservableList<XYChart.Series<String, Number>> avgPriceSeriesList = FXCollections.observableArrayList();
 
 		// 交易点（“线”）列表
 		ObservableList<XYChart.Series<String, Number>> transDotList = FXCollections.observableArrayList();
-
-		// 添加线和交易点列表
-		setData(FXCollections.observableArrayList(priceSeries));
-
-		// 设置线条颜色（必须在添加进图表之后）
-		setLineColor(priceSeries, Color.RED, 1.0);
 
 		// 业务逻辑：根据参数获取数据并替换图表内容
 		ListChangeListener<DatePrice> priceListListener = change -> {
@@ -75,6 +77,19 @@ public class FundChart extends LineChart<String, Number> {
 			}
 		});
 		changeTransDotList(transactions.get(), transDotList);
+
+		// 业务逻辑：数据变化或设置改变时应用设置
+		ListChangeListener<XYChart.Data<String, Number>> settingApplyListener = change -> autoYAxisBound();
+		getData().forEach(series -> series.getData().addListener(settingApplyListener));
+		getData().addListener((ListChangeListener<Series<String, Number>>) change -> {
+			while (change.next()) {
+				change.getRemoved().forEach(series -> series.getData().removeListener(settingApplyListener));
+				change.getAddedSubList().forEach(series -> series.getData().addListener(settingApplyListener));
+			}
+		});
+
+		yAxisFrom0.addListener((p, oldValue, newValue) -> autoYAxisBound(newValue));
+		autoYAxisBound();
 	}
 
 	private void changePriceLines(List<? extends DatePrice> newList, XYChart.Series<String, Number> priceSeries,
@@ -170,6 +185,43 @@ public class FundChart extends LineChart<String, Number> {
 		line.setStyle("-fx-stroke: rgba(" + rgb + ", " + alpha + ");");
 	}
 
+	private void autoYAxisBound() {
+		autoYAxisBound(yAxisFrom0.get());
+	}
+
+	private void autoYAxisBound(boolean yAxisFrom0) {
+		if (yAxisFrom0) {
+			getYAxis().setAutoRanging(true);
+		} else {
+			getYAxis().setAutoRanging(false);
+
+			DoubleSummaryStatistics yValueStats = getData().stream().flatMap(series -> series.getData().stream())
+					.collect(Collectors.summarizingDouble(data -> data.getYValue().doubleValue()));
+
+			System.out.println(yValueStats);
+
+			double lowerBound, upperBound;
+			if (yValueStats.getCount() > 0) {
+				double rangeSize = yValueStats.getMax() - yValueStats.getMin();
+				if (rangeSize == 0) {
+					lowerBound = yValueStats.getMin() - 1;
+					upperBound = yValueStats.getMax() + 1;
+				} else {
+					lowerBound = yValueStats.getMin() - rangeSize / 20;
+					lowerBound = Math.ceil(lowerBound * 100) / 100;
+					upperBound = yValueStats.getMax() + rangeSize / 20;
+					upperBound = Math.floor(upperBound * 100) / 100;
+				}
+			} else {
+				lowerBound = upperBound = 0;
+			}
+
+			NumberAxis yAxis = ((NumberAxis) getYAxis());
+			yAxis.setLowerBound(lowerBound);
+			yAxis.setUpperBound(upperBound);
+		}
+	}
+
 	public final ObjectProperty<ObservableList<DatePrice>> pricesProperty() {
 		return this.prices;
 	}
@@ -193,6 +245,18 @@ public class FundChart extends LineChart<String, Number> {
 	public final void setTransactions(
 			final javafx.collections.ObservableList<blove.kmm.fund.biz.bo.Transaction> transactions) {
 		this.transactionsProperty().set(transactions);
+	}
+
+	public final BooleanProperty yAxisFrom0Property() {
+		return this.yAxisFrom0;
+	}
+
+	public final boolean isYAxisFrom0() {
+		return this.yAxisFrom0Property().get();
+	}
+
+	public final void setYAxisFrom0(final boolean yAxisFrom0) {
+		this.yAxisFrom0Property().set(yAxisFrom0);
 	}
 
 }
