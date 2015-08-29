@@ -208,9 +208,9 @@ public class FundChart extends LineChart<String, Number> {
 					upperBound = yValueStats.getMax() + 1;
 				} else {
 					lowerBound = yValueStats.getMin() - rangeSize / 20;
-					lowerBound = Math.ceil(lowerBound * 100) / 100;
+					lowerBound = Math.floor(lowerBound * 100) / 100;
 					upperBound = yValueStats.getMax() + rangeSize / 20;
-					upperBound = Math.floor(upperBound * 100) / 100;
+					upperBound = Math.ceil(upperBound * 100) / 100;
 				}
 			} else {
 				lowerBound = upperBound = 0;
