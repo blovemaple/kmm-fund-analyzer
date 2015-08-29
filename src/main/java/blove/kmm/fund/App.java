@@ -26,6 +26,10 @@ public class App extends Application {
 			System.exit(1);
 			return;
 		}
+
+		// 优先用ipv4，否则新浪的url请求会很慢
+		System.setProperty("java.net.preferIPv4Stack", "true");
+
 		FundBiz biz = new FundBiz(new PriceSupport(), new AccountDao(params.get(0)));
 
 		BorderPane pane = new BorderPane();
