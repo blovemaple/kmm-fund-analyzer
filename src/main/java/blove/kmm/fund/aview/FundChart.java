@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import blove.kmm.fund.biz.FundBiz;
 import blove.kmm.fund.biz.bo.DatePrice;
 import blove.kmm.fund.biz.bo.Transaction;
-import blove.kmm.fund.support.db.TransactionType;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -153,8 +152,8 @@ public class FundChart extends LineChart<String, Number> {
 		getData().removeAll(transDotList);
 
 		List<XYChart.Series<String, Number>> newDots = newList.stream()
-				.sorted(Comparator.comparing(Transaction::getDate))
-				.filter(transaction -> transaction.getType() != TransactionType.DIVIDEN).map(transaction -> {
+				.sorted(Comparator.comparing(Transaction::getDate)).filter(transaction -> transaction.getPrice() > 0)
+				.map(transaction -> {
 					XYChart.Data<String, Number> dot = new XYChart.Data<>();
 					dot.XValueProperty().bind(transaction.dateProperty().asString());
 					dot.YValueProperty().bind(transaction.priceProperty());
@@ -197,8 +196,6 @@ public class FundChart extends LineChart<String, Number> {
 
 			DoubleSummaryStatistics yValueStats = getData().stream().flatMap(series -> series.getData().stream())
 					.collect(Collectors.summarizingDouble(data -> data.getYValue().doubleValue()));
-
-			System.out.println(yValueStats);
 
 			double lowerBound, upperBound;
 			if (yValueStats.getCount() > 0) {

@@ -64,7 +64,7 @@ public class FundBiz {
 			endDate = LocalDate.now();
 		} else {
 			dbTrans.sort(Comparator.comparing(DBTransaction::getDate));
-			startDate = dbTrans.get(0).getDate().minusDays(3);
+			startDate = dbTrans.get(0).getDate().minusDays(5);
 			endDate = LocalDate.now();
 		}
 		return new DateRange(startDate, endDate);
@@ -173,6 +173,9 @@ public class FundBiz {
 			case DIVIDEN:
 				res.fundInfo.setTotalDividen(res.fundInfo.getTotalDividen() + dbTran.getAmount());
 				break;
+			case ADD:
+				res.fundInfo.setMyQuantity(res.fundInfo.getMyQuantity() + dbTran.getQuantity());
+				break;
 			default:
 				System.err.println("Unrecognized trans type:" + dbTran.getType());
 				break;
@@ -188,6 +191,7 @@ public class FundBiz {
 					tran.setProfitRate(profit / (oriAvgPrice * dbTran.getQuantity()));
 				case BUY:
 				case REINVEST:
+				case ADD:
 					tran.setQuantity(dbTran.getQuantity());
 					tran.setPrice(dbTran.getPrice());
 				default:

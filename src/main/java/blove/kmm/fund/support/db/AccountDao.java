@@ -163,18 +163,23 @@ public class AccountDao {
 							Double.parseDouble(resultSet.getString("valueFormatted"))));
 					transaction.setAmount(Math.abs(Double.parseDouble(resultSet.getString("valueFormatted"))));
 					transaction.setQuantity(Math.abs(Double.parseDouble(resultSet.getString("sharesFormatted"))));
-					transaction.setPrice(Double.parseDouble(resultSet.getString("priceFormatted")));
+					String priceFormatted = resultSet.getString("priceFormatted");
+					transaction.setPrice(priceFormatted == null ? 0 : Double.parseDouble(priceFormatted));
 					transaction.setFee(0);// 默认手续费为0，后面再查
 					res.add(transaction);
 					switch (transaction.getType()) {
 					case BUY:
 					case SELL:
 					case REINVEST:
+						// 买卖、红利再投需要查询手续费
 						buySells.put(resultSet.getString("transactionId"), transaction);
 						break;
 					case DIVIDEN:
+						// 分红需要查询分红金额
 						dividens.put(resultSet.getString("transactionId"), transaction);
 						break;
+					default:
+						// 其余类型什么都不用查
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -245,6 +250,8 @@ public class AccountDao {
 			return TransactionType.DIVIDEN;
 		case "Reinvest":
 			return TransactionType.REINVEST;
+		case "Add":
+			return TransactionType.ADD;
 		default:
 			return null;
 		}

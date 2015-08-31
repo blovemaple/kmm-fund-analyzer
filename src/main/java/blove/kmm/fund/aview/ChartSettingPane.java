@@ -16,7 +16,7 @@ public class ChartSettingPane extends FlowPane {
 		// 设置纵坐标是否从0开始的复选框
 		CheckBox yAxisFrom0Box = new CheckBox("纵坐标从0开始");
 		getChildren().add(yAxisFrom0Box);
-		yAxisFrom0Box.setSelected(true);
+		yAxisFrom0Box.setSelected(false);
 		yAxisFrom0.bind(yAxisFrom0Box.selectedProperty());
 	}
 
