@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableMap;
-import java.util.OptionalDouble;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -58,14 +58,15 @@ public class PriceSupport {
 	 * 
 	 * @param fundCode
 	 *            基金代码
-	 * @return 净值
+	 * @return singleton map，日期——净值
 	 */
-	public OptionalDouble getNewPrice(String fundCode) {
+	public Map<LocalDate, Double> getNewPrice(String fundCode) {
 		SortedMap<LocalDate, Double> recentPrices = getPriceOnce(fundCode, null, null);
 		if (recentPrices.isEmpty()) {
-			return OptionalDouble.empty();
+			return Collections.singletonMap(null, 0D);
 		}
-		return OptionalDouble.of(recentPrices.get(recentPrices.lastKey()));
+		LocalDate date = recentPrices.lastKey();
+		return Collections.singletonMap(date, recentPrices.get(date));
 	}
 
 	private NavigableMap<LocalDate, Double> getPriceOnce(String fundCode, LocalDate fromDate, LocalDate toDate) {

@@ -1,9 +1,13 @@
 package blove.kmm.fund.biz.bo;
 
+import java.time.LocalDate;
+
 import blove.kmm.fund.aview.util.Percentagized;
 import blove.kmm.fund.aview.util.Precised;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -29,6 +33,8 @@ public class FundInfo {
 	@ShowName("最新净值")
 	@Precised(4)
 	private DoubleProperty crtPrice = new SimpleDoubleProperty();
+	@ShowName("最新净值日期")
+	private ObjectProperty<LocalDate> crtPriceDate = new SimpleObjectProperty<>();
 	@ShowName("浮动收益")
 	@Precised(2)
 	private DoubleProperty crtProfit = new SimpleDoubleProperty();// auto
@@ -223,6 +229,18 @@ public class FundInfo {
 
 	public final void setCategoryName(final java.lang.String categoryName) {
 		this.categoryNameProperty().set(categoryName);
+	}
+
+	public final ObjectProperty<LocalDate> crtPriceDateProperty() {
+		return this.crtPriceDate;
+	}
+
+	public final java.time.LocalDate getCrtPriceDate() {
+		return this.crtPriceDateProperty().get();
+	}
+
+	public final void setCrtPriceDate(final java.time.LocalDate crtPriceDate) {
+		this.crtPriceDateProperty().set(crtPriceDate);
 	}
 
 	@Override

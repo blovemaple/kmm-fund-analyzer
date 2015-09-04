@@ -39,8 +39,9 @@ public class FundTreeTable extends TreeTableView<NameValue> {
 		// 添加列
 		List<TreeTableColumn<NameValue, String>> columns = new ArrayList<>();
 		columns.add(geneColumn(MAP_KEY_NAME, 240, false));
-		columns.add(geneColumn(MAP_KEY_VALUE, 60, true));
+		columns.add(geneColumn(MAP_KEY_VALUE, 80, true));
 		getColumns().addAll(columns.stream().toArray(TreeTableColumn[]::new));
+		this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
 		// 添加内容
 		TreeItem<NameValue> root = new TreeItemWithFundId<>();
@@ -125,6 +126,7 @@ public class FundTreeTable extends TreeTableView<NameValue> {
 	private TreeTableColumn<NameValue, String> geneColumn(String property, double minWidth, boolean rightAlignment) {
 		TreeTableColumn<NameValue, String> column = new TreeTableColumn<>();
 		column.setMinWidth(minWidth);
+		column.setPrefWidth(minWidth + 20);// prefWidth比minWitch大一些，以便出现滚动条时可以缩小列宽
 		column.setCellValueFactory(new TreeItemPropertyValueFactory<>(property));
 		if (rightAlignment) {
 			column.setStyle("-fx-alignment: CENTER-RIGHT;");

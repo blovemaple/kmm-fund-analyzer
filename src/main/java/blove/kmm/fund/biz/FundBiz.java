@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Optional;
@@ -42,8 +43,12 @@ public class FundBiz {
 	 * @return 所有基金信息
 	 */
 	public List<FundInfo> getAllFundInfo() {
-		Consumer<FundInfo> newPriceSetter = fundInfo -> fundInfo
-				.setCrtPrice(priceSupport.getNewPrice(dao.getFundCode(fundInfo.getFundId()).orElse("")).orElse(0));
+		Consumer<FundInfo> newPriceSetter = fundInfo -> {
+			Map.Entry<LocalDate, Double> newPrice = priceSupport
+					.getNewPrice(dao.getFundCode(fundInfo.getFundId()).orElse("")).entrySet().iterator().next();
+			fundInfo.setCrtPrice(newPrice.getValue());
+			fundInfo.setCrtPriceDate(newPrice.getKey());
+		};
 		return dao.getAllFundId().parallelStream().map(fundId -> analyze(fundId, null, LocalDate.now()).fundInfo)
 				.peek(newPriceSetter).collect(Collectors.toList());
 	}

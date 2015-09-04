@@ -85,6 +85,7 @@ public class FundChart extends LineChart<String, Number> {
 				change.getRemoved().forEach(series -> series.getData().removeListener(settingApplyListener));
 				change.getAddedSubList().forEach(series -> series.getData().addListener(settingApplyListener));
 			}
+			autoYAxisBound();
 		});
 
 		yAxisFrom0.addListener((p, oldValue, newValue) -> autoYAxisBound(newValue));

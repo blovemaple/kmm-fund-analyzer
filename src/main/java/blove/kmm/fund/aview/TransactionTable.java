@@ -47,6 +47,7 @@ public class TransactionTable extends TableView<Transaction> {
 		columns.add(geneColumn("净收益", Transaction.PROPERTY_PROFIT, true));
 		columns.add(geneColumn("收益率", Transaction.PROPERTY_PROFIT_RATE, true));
 		getColumns().addAll(columns.stream().toArray(TableColumn[]::new));
+		this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
 		// 添加内容列表
 		ObservableList<Transaction> itemList = FXCollections.observableArrayList();

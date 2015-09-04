@@ -42,6 +42,7 @@ public class PriceTable extends TableView<DatePrice> {
 		columns.add(geneColumn("日增幅", DatePrice.PROPERTY_INCREASE_RATE, true));
 		columns.add(geneColumn("持有均价", DatePrice.PROPERTY_AVG_PRICE, true));
 		getColumns().addAll(columns.stream().toArray(TableColumn[]::new));
+		this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
 		// 业务逻辑：根据属性获取价格列表并填入内容列表
 		fundId.addListener((p, oldValue, newValue) -> refresh());
