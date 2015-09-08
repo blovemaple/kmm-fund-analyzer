@@ -2,7 +2,6 @@ package blove.kmm.fund.aview;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.DoubleSummaryStatistics;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,19 +76,8 @@ public class FundChart extends LineChart<String, Number> {
 		});
 		changeTransDotList(transactions.get(), transDotList);
 
-		// 业务逻辑：数据变化或设置改变时应用设置
-		ListChangeListener<XYChart.Data<String, Number>> settingApplyListener = change -> autoYAxisBound();
-		getData().forEach(series -> series.getData().addListener(settingApplyListener));
-		getData().addListener((ListChangeListener<Series<String, Number>>) change -> {
-			while (change.next()) {
-				change.getRemoved().forEach(series -> series.getData().removeListener(settingApplyListener));
-				change.getAddedSubList().forEach(series -> series.getData().addListener(settingApplyListener));
-			}
-			autoYAxisBound();
-		});
-
-		yAxisFrom0.addListener((p, oldValue, newValue) -> autoYAxisBound(newValue));
-		autoYAxisBound();
+		// 业务逻辑：应用设置
+		((NumberAxis) getYAxis()).forceZeroInRangeProperty().bind(yAxisFrom0);
 	}
 
 	private void changePriceLines(List<? extends DatePrice> newList, XYChart.Series<String, Number> priceSeries,
@@ -183,41 +171,6 @@ public class FundChart extends LineChart<String, Number> {
 		String rgb = String.format("%d, %d, %d", (int) (color.getRed() * 255), (int) (color.getGreen() * 255),
 				(int) (color.getBlue() * 255));
 		line.setStyle("-fx-stroke: rgba(" + rgb + ", " + alpha + ");");
-	}
-
-	private void autoYAxisBound() {
-		autoYAxisBound(yAxisFrom0.get());
-	}
-
-	private void autoYAxisBound(boolean yAxisFrom0) {
-		if (yAxisFrom0) {
-			getYAxis().setAutoRanging(true);
-		} else {
-			getYAxis().setAutoRanging(false);
-
-			DoubleSummaryStatistics yValueStats = getData().stream().flatMap(series -> series.getData().stream())
-					.collect(Collectors.summarizingDouble(data -> data.getYValue().doubleValue()));
-
-			double lowerBound, upperBound;
-			if (yValueStats.getCount() > 0) {
-				double rangeSize = yValueStats.getMax() - yValueStats.getMin();
-				if (rangeSize == 0) {
-					lowerBound = yValueStats.getMin() - 1;
-					upperBound = yValueStats.getMax() + 1;
-				} else {
-					lowerBound = yValueStats.getMin() - rangeSize / 20;
-					lowerBound = Math.floor(lowerBound * 100) / 100;
-					upperBound = yValueStats.getMax() + rangeSize / 20;
-					upperBound = Math.ceil(upperBound * 100) / 100;
-				}
-			} else {
-				lowerBound = upperBound = 0;
-			}
-
-			NumberAxis yAxis = ((NumberAxis) getYAxis());
-			yAxis.setLowerBound(lowerBound);
-			yAxis.setUpperBound(upperBound);
-		}
 	}
 
 	public final ObjectProperty<ObservableList<DatePrice>> pricesProperty() {

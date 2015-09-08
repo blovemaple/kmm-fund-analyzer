@@ -14,7 +14,7 @@ import blove.kmm.fund.support.price.SinaFundInfo.SinaFundResult;
 import blove.kmm.fund.support.price.SinaFundInfo.SinaFundResultData;
 
 /**
- * 基金相关业务逻辑。
+ * 价格相关数据支持。
  * 
  * @author blove
  */

@@ -54,10 +54,10 @@ public class TransactionTable extends TableView<Transaction> {
 		setItems(itemList);
 
 		// 业务逻辑：根据属性获取交易记录并填入内容列表
-		fundId.addListener((p, oldValue, newValue) -> refresh());
-		fromDate.addListener((p, oldValue, newValue) -> refresh());
-		toDate.addListener((p, oldValue, newValue) -> refresh());
-		refresh();
+		fundId.addListener((p, oldValue, newValue) -> refreshData());
+		fromDate.addListener((p, oldValue, newValue) -> refreshData());
+		toDate.addListener((p, oldValue, newValue) -> refreshData());
+		refreshData();
 	}
 
 	private TableColumn<Transaction, Label> geneColumn(String showName, String property, boolean rightAlignment) {
@@ -71,7 +71,7 @@ public class TransactionTable extends TableView<Transaction> {
 
 	private Task<List<Transaction>> queryTask = null;
 
-	private synchronized void refresh() {
+	private synchronized void refreshData() {
 		if (queryTask != null) {
 			queryTask.cancel();
 		}

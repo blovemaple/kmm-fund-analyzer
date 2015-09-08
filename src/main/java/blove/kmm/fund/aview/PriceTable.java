@@ -45,10 +45,10 @@ public class PriceTable extends TableView<DatePrice> {
 		this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 
 		// 业务逻辑：根据属性获取价格列表并填入内容列表
-		fundId.addListener((p, oldValue, newValue) -> refresh());
-		fromDate.addListener((p, oldValue, newValue) -> refresh());
-		toDate.addListener((p, oldValue, newValue) -> refresh());
-		refresh();
+		fundId.addListener((p, oldValue, newValue) -> refreshData());
+		fromDate.addListener((p, oldValue, newValue) -> refreshData());
+		toDate.addListener((p, oldValue, newValue) -> refreshData());
+		refreshData();
 	}
 
 	private TableColumn<DatePrice, Label> geneColumn(String showName, String property, boolean rightAlignment) {
@@ -62,7 +62,7 @@ public class PriceTable extends TableView<DatePrice> {
 
 	private Task<ObservableList<DatePrice>> queryTask = null;
 
-	private synchronized void refresh() {
+	private synchronized void refreshData() {
 		if (queryTask != null) {
 			queryTask.cancel();
 		}
