@@ -5,7 +5,7 @@ import java.util.List;
 import blove.kmm.fund.aview.ChartSettingPane;
 import blove.kmm.fund.aview.DateSelector;
 import blove.kmm.fund.aview.FundChart;
-import blove.kmm.fund.aview.FundTreeTable;
+import blove.kmm.fund.aview.FundTreeTableNew;
 import blove.kmm.fund.aview.PriceTable;
 import blove.kmm.fund.aview.TransactionTable;
 import blove.kmm.fund.biz.FundBiz;
@@ -34,7 +34,7 @@ public class App extends Application {
 
 		BorderPane pane = new BorderPane();
 
-		FundTreeTable fundTreeTable = new FundTreeTable(biz);
+		FundTreeTableNew fundTreeTable = new FundTreeTableNew(biz);
 		pane.setLeft(fundTreeTable);
 
 		BorderPane fundPane = new BorderPane();

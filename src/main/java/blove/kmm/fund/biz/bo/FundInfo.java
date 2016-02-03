@@ -14,6 +14,7 @@ import javafx.beans.property.StringProperty;
 public class FundInfo {
 	private StringProperty fundId = new SimpleStringProperty();
 	private StringProperty fundName = new SimpleStringProperty();
+	public static final String PROPERTY_FUND_NAME = "fundName";
 	private StringProperty categoryName = new SimpleStringProperty();
 
 	// 持仓部分的购买金额加上购买手续费
@@ -29,6 +30,7 @@ public class FundInfo {
 	@ShowName("持仓市值")
 	@Precised(2)
 	private DoubleProperty myAmount = new SimpleDoubleProperty();// auto
+	public static final String PROPERTY_MY_AMOUNT = "myAmount";
 
 	@ShowName("最新净值")
 	@Precised(4)
@@ -38,6 +40,7 @@ public class FundInfo {
 	@ShowName("浮动收益")
 	@Precised(2)
 	private DoubleProperty crtProfit = new SimpleDoubleProperty();// auto
+	public static final String PROPERTY_CRT_PROFIT = "crtProfit";
 	@ShowName("浮动收益率")
 	@Percentagized(2)
 	private DoubleProperty crtProfitRate = new SimpleDoubleProperty();// auto

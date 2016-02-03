@@ -82,8 +82,12 @@ public class PropertyLabelFactory<S> implements Callback<S, ObservableValue<Labe
 
 					if (((Percentagized) anno).colored()) {
 						label.textFillProperty().bind(Bindings.createObjectBinding(() -> {
-							return doubleValue.get() > 0 ? Color.RED
-									: doubleValue.get() < 0 ? Color.GREEN : Color.BLACK;
+							if (doubleValue.get() > 0)
+								return Color.RED;
+							else if (doubleValue.get() < 0)
+								return Color.GREEN;
+							else
+								return Color.BLACK;
 						} , doubleValue));
 					}
 
@@ -124,7 +128,7 @@ public class PropertyLabelFactory<S> implements Callback<S, ObservableValue<Labe
 			return Double.valueOf(String.valueOf(rawValue.get()));
 		} , rawValue);
 	}
-	
+
 	public static <S> Callback<javafx.scene.control.TreeTableColumn.CellDataFeatures<S, Label>, ObservableValue<Label>> forTreeTable(
 			String property) {
 		PropertyLabelFactory<S> nodeFactory = new PropertyLabelFactory<>(property);
